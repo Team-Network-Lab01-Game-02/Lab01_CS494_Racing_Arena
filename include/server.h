@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -19,6 +20,7 @@ int openServer(char *portStr);
 // gameLoopS() global variables
 extern bool sessionEnd;
 extern int count;
-int gameLoopS();
+int gameLoop();
+int serverTest(char *portno);
 #endif
 

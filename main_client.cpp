@@ -1,6 +1,6 @@
 #include "client.h"
 
-int main(){
-  hello();
+int main(int argc, char *argv[]){
+  clientTest(argv);
   return 0;
 }
