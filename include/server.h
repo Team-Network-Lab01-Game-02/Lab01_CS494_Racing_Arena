@@ -1,3 +1,5 @@
+#ifndef SERVER_H
+#define SERVER_H
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -12,3 +14,9 @@ using namespace std;
 
 void hello();
 int openServer(char *portStr);
+// gameLoop() global variables
+extern bool sessionEnd;
+extern int count;
+int gameLoop();
+#endif
+
