@@ -19,8 +19,8 @@ root/main_server.cpp
 root/main_client.cpp
 - Contains the main() function for client side
 
-root/bin
+root/server
 - The executable object file for server
 
-root/bin2
+root/client
 - The executable object file for client
