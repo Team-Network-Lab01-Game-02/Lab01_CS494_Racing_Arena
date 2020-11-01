@@ -1,10 +1,12 @@
-#include "server.h"
+#include "header.h"
+
+int listenFd;
 
 int openServer(char *portStr){
   int portno = atoi(portStr);
   sockaddr_in serverAddr;
   sockaddr &serverAddrCast = (sockaddr &) serverAddr;
-  int listenFd = socket(AF_INET, SOCK_STREAM, 0);
+  listenFd = socket(AF_INET, SOCK_STREAM, 0);
   bzero(&serverAddr, sizeof(serverAddr));
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);

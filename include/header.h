@@ -1,5 +1,5 @@
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef HEADER_H
+#define HEAVER_H
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -16,9 +16,9 @@ void hello();
 // openSever() global variables
 extern int listenFd;
 int openServer(char *portStr);
-// gameLoopS() global variables
+// gameLoop() global variables
 extern bool sessionEnd;
 extern int count;
-int gameLoopS();
+int gameLoop();
 #endif
 
