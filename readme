@@ -4,12 +4,23 @@ root/doc/
 - Contains the documentation for the project
 
 root/include/
-- Contains header file
+- Contains header file:
+  + server.h for server
+  + client.h for client
+
 root/defs/
 - Contains definitions for header file
+  + root/defs/server : contains definitions for server header
+  + root/def/client  : contains definitions for client header
 
 root/main_server.cpp
 - Contains the main() function for server side
 
+root/main_client.cpp
+- Contains the main() function for client side
+
 root/bin
-- The executable object file
+- The executable object file for server
+
+root/bin2
+- The executable object file for client
