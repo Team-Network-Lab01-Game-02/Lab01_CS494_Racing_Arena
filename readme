@@ -1,0 +1,15 @@
+Repository Guide
+
+root/doc/
+- Contains the documentation for the project
+
+root/include/
+- Contains header file
+root/defs/
+- Contains definitions for header file
+
+root/main_server.cpp
+- Contains the main() function for server side
+
+root/bin
+- The executable object file
