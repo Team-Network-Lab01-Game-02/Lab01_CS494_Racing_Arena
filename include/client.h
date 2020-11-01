@@ -1,5 +1,5 @@
-#ifndef HEADER_H
-#define HEAVER_H
+#ifndef CLIENT_H
+#define CLIENT_H
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -13,12 +13,5 @@
 using namespace std;
 
 void hello();
-// openSever() global variables
-extern int listenFd;
-int openServer(char *portStr);
-// gameLoop() global variables
-extern bool sessionEnd;
-extern int count;
-int gameLoop();
 #endif
 
