@@ -6,7 +6,7 @@ int serverTest(char *portno){
   int connectFd = accept(listenFd, (sockaddr *) NULL, NULL);
   cout << "Client connected. Sending welcome message" << endl;
   char buffer[256];
-  send(connectFd, "Welcome to the RACE\n", 19, 0);
+  send(connectFd, "Welcome to the RACE\nLine 2", 26, 0);
   bzero(buffer, 256);
   cout << "Waiting for a message from client" << endl;
   recv(connectFd, buffer, 255, 0);
