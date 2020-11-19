@@ -1,3 +1,24 @@
+How to run client executable :
+./client
+
+How to compile client executable
+1. Install dependency Qt gui widget toolkit: For linux, 'sudo apt get qt5-default'
+2. Qt comes with a 'qmake' binary: 
+- This qmake binary is used to make the Makefile for the project, using the 'client.pro' config file in the project folder.
+- The command to make Makefile is : 'qmake client.pro -o Makefile'
+3. The command 'make' to compile the project, using the Makefile from (2)
+
+You can test run server-client by:
+'./server 9000 && ./client'
+*9000 is the port number, client by default use 9000 as port number of server.
+
+
+
+
+
+
+
+
 Repository Guide
 
 root/doc/
