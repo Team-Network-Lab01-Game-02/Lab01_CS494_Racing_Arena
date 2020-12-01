@@ -8,6 +8,15 @@ QTcpSocket *sock;
 char buffer[512];
 QString inputText;
 
+
+//main screen Information
+vector<string> listUser;
+vector<pair<int,int> > score;
+string serverMessage = "";
+int yourScore = 0;
+int maxScore = 0;
+map<int,bool> removeUser;
+
 int w_win = 600;
 int h_win = 400;
 
@@ -187,10 +196,6 @@ void waitScreen() {
       loadingBar = new QWidget();
       loadingBar->setObjectName("Loading Bar");
       loadingBar->setParent(win);
-      loadingBar->setGeometry(int(440 * rate_w), int(500*rate_h), int(120*rate_w), int(20*rate_h));
-      loadingBar->setPalette(Qt::white);
-      loadingBar->setAutoFillBackground(true);
-      loadingDot = new QWidget();
       loadingDot->setObjectName("Loading Dot");
       loadingDot->setParent(loadingBar);
       loadingDot->setGeometry(0, 0, 20, 20);
@@ -231,8 +236,28 @@ void waitScreen() {
 }
 
 void drawBackGround(bool close){
+    static QListWidget *list_user;
+    static QListWidget *scoreUI;
+    static QLabel *serverMessage;
     if(close){
+      scoreUI -> close();
+      serverMessage -> close();
+      list_user->close();
+      return;
     }
+    list_user = new QListWidget();  
+    list_user->setObjectName("List User");
+    list_user->setParent(win);
+    list_user->setGeometry(0.1*w_win, 0.1*h_win, 0.6*w_win, 0.4*h_win);
+    //for(int i =  0;i<l_item.size();++i){
+    //  list_user->addItem(QString::number(i)+" "+list[i].c_str());
+    //}
+    list_user -> show();
+    
+    scoreUI = new QListWidget();
+    scoreUI -> setObjectName("List Score");
+    scoreUI -> setGeometry(0.7*w_win,0.1*h_win,0.2*w_win, 0.4*h_win);
+    
 }
 
 void inputScreen() {
@@ -314,121 +339,13 @@ int main(int argc, char *argv[]) {
   return app->exec();
 }
 
-void username_request(bool close){
 
-   static QLabel *dummy;
-      if(close){
-      dummy->close();
-      return;
-  }
-  dummy = new QLabel();
-  dummy->setObjectName("Dummy Text");
-  dummy->setParent(win);
-  dummy->setGeometry(int(0 * rate_w), int(100*rate_h), int(1000*rate_w), int(200*rate_h));
-  dummy->setText("Enter username");
-  dummy->setAlignment(Qt::AlignCenter);
-  dummy->show();
-
-}
-
-void username_request_status(bool is_success,bool close){
-  static QLabel *dummy;
-  if(close){
-      dummy->close();
-      return;
-  }
-  dummy = new QLabel();
-  dummy->setObjectName("Dummy Text");
-  dummy->setParent(win);
-  dummy->setGeometry(int(0 * rate_w), int(100*rate_h), int(1000*rate_w), int(200*rate_h));
-  if(is_success){
-    dummy->setText("Registration success");
-  }else{
-    dummy->setText("Registration failure");  
-  }
-  dummy->setAlignment(Qt::AlignCenter);
-  dummy->show();
-}
-
-void username_id_mapping(vector<string> l_item,bool close){
-
-  static QListWidget *list_user;
-  static QLabel *dummy;
-  if(close){
-      cout<<"Close user_id_mapping..."<<endl;
-      dummy->close();
-      list_user->close();
-      return;
-  }
-  dummy = new QLabel();
-  dummy->setObjectName("List User Name");
-  dummy->setParent(win);
-  dummy->setGeometry(int(w_win * 0.8), int(100*rate_h), int(1000*rate_w), int(200*rate_h));
-  dummy->setText("List User Name");
-  dummy->setAlignment(Qt::AlignCenter);
-  dummy->show();
-  list_user = new QListWidget();  
-  list_user->setObjectName("List User");
-  list_user->setParent(dummy);
-  list_user->setGeometry(0, 0.1*h_win, int(200*rate_w), int(200*rate_h));
-  for(int i =  0;i<l_item.size();++i){
-      list_user->addItem(QString::number(i)+" "+l_item[i].c_str());
-  }
-  list_user->show();
-}
-
-void score_info(bool close){
-  static QLabel *dummy;
-   if(close){
-      dummy->close();
-      return;
-  }
-  dummy = new QLabel();
-  dummy->setObjectName("Dummy Text");
-  dummy->setParent(win);
-  dummy->setGeometry(int(0 * rate_w), int(100*rate_h), int(1000*rate_w), int(200*rate_h));
-  dummy->setText("Enter you nickname: 4");
-  dummy->setAlignment(Qt::AlignCenter);
-}
-
-void question(string str,bool close){
-  static QLabel *dummy;
-    if(close){
-      dummy->close();
-      return;
-  }
-  dummy = new QLabel();
-  dummy->setObjectName("Question: ");
-  dummy->setParent(win);
-  dummy->setGeometry(int(0 * rate_w), int(100*rate_h), int(1000*rate_w), int(200*rate_h));
-  str = "Question: " + str;
-  dummy->setText(str.c_str());
-  dummy->setAlignment(Qt::AlignCenter);
-  dummy->show();
-
-}
-
-void answer_info(bool close){
-      static QLabel *dummy;
-        if(close){
-      dummy->close();
-      return;
-        }
-      dummy = new QLabel();
-      dummy->setObjectName("Dummy Text");
-      dummy->setParent(win);
-      dummy->setGeometry(int(0 * rate_w), int(100*rate_h), int(1000*rate_w), int(200*rate_h));
-      dummy->setText("Enter you nickname: 6");
-      dummy->setAlignment(Qt::AlignCenter);
-
-}
-
-vector<string> findListFromMessage(vector<string> ms){
+vector<string> findListFromMessage(vector<string> ms,int index){
     vector<string> res;
     string end = "end";
     string start = "start";
     int start_index = ms.size();
-    for(int i = 0 ; i<ms.size();++i){
+    for(int i = index ; i<ms.size();++i){
         if(ms[i]==start){
             start_index = i+1;
             break;
@@ -439,6 +356,26 @@ vector<string> findListFromMessage(vector<string> ms){
         res.push_back(ms[i]);
     }
     return res;
+}
+
+pair<int, int> score2Pair(string s){
+    pair<int,int> re;
+    int id = 0;
+    int sc = 0;
+    bool  is_id = true;
+    for(int i=0;i<s.size();++i){
+        if(s[i]==' '){
+            is_id = false;
+        }
+        if(is_id){
+            id = id*10 + (s[i]-'0');
+        }
+        else {
+            sc = sc*10 + (s[i]-'0');
+        }
+    }
+    re = make_pair(sc,id);
+    return re;
 }
 
 void HandleMessage(bool is_close){
@@ -453,22 +390,43 @@ void HandleMessage(bool is_close){
     }
     cout<<"handle_message is running..."<<endl;
     if(c == "username_request"){
-        cout<<"handle_messages  for username request"<<endl;
-        username_request(is_close);
+        serverMessage = "Enter username: ";
     }else if(c == "username_request_status"){
-        cout<<"handle_messages  for username request status: "<<listM[1]<<endl;
-        username_request_status(listM[1]=="Success",is_close);
+        if(listM[1]=="Success"){
+            serverMessage = "Registration completed successfully";
+        }
+        else{
+            serverMessage = "Registration failure!!";
+        }
     }else if(c == "username_id_mapping"){
-        cout<<"handle_messages  for username id mapping"<<endl;
-        username_id_mapping(findListFromMessage(listM),is_close);
+        listUser = findListFromMessage(listM,0);
     }else if(c == "score_info"){
-        cout<<"handle_messages  for score_info"<<endl;
-        score_info(is_close);
+        yourScore = atoi(listM[1].c_str());
+        maxScore = atoi(listM[1].c_str());
     }else if(c == "question"){
-        cout<<"handle_messages  for question"<<endl;
-        question(listM[1],is_close);
+        serverMessage = listM[1];
     }else if(c == "answer_info"){
-        cout<<"handle_messages  for answer_info"<<endl;
-        answer_info(is_close);
+        serverMessage = "Your  answer is " + listM[1] +" and " + listM[2] +",  you are " + listM[3];
+        vector<string> listRemove = findListFromMessage(listM,0);
+        vector<string> listScore = findListFromMessage(listM,4+listRemove.size());
+        
+        for(int i = 0 ;i<listRemove.size();++i){
+         removeUser[atoi(listRemove[i].c_str())] = true;   
+        }
+        
+        for(int i = 0 ;i<listScore.size();++i){
+            score.push_back(score2Pair(listScore[i]));
+        }
+        
+    }
+    else if(c == "continue"){
+        if(listM[1]=="y"){
+            serverMessage = "Game Over!!, The winner is: ";
+            sort(score.begin(),score.end());
+            serverMessage += listUser[score[0].second];
+        }
+        else{
+            serverMessage = "Game continue, wait for the next question...";
+        }
     }
 }
