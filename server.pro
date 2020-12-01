@@ -6,9 +6,8 @@ QT += core
 QT += network
 QT += gui
 INCLUDEPATH += $${projectdir}/include
-HEADERS += $${projectdir}/include/client.h
-SOURCES += $${projectdir}/main_client.cpp
-SOURCES += $${projectdir}/defs/client/*.cpp
+SOURCES += $${projectdir}/main_server.cpp
+HEADERS += $${projectdir}/include/server.h
+SOURCES += $${projectdir}/defs/server/*.cpp
 DESTDIR = $${projectdir} 
-TARGET = client
-
+TARGET = server

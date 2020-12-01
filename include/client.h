@@ -23,7 +23,9 @@
 #include <QString> 
 #include <QtGlobal> 
 #include <QTextEdit> 
-
+#include <QListWidget>
+#include <vector>
+#include <sstream>
 using namespace std;
 
 void hello();
