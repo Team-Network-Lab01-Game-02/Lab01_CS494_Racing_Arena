@@ -5,7 +5,7 @@ int state = 0;
 QApplication *app;
 window *win;
 QTcpSocket *sock;
-char buffer[1000];
+char buffer[512];
 QString inputText;
 
 
@@ -101,6 +101,7 @@ void connectingScreen() {
       connectingText->show();
       loadingBar->show();
       loadingDot->show();
+      cout<<"Setup success"<<endl;
       nextState(1);
     } else if (*holdTimer < 5) {
       *holdTimer = *holdTimer + 1;
@@ -119,13 +120,13 @@ void connectingScreen() {
       nextState(1);
     } else {
       if(win->ServerConnected) {
-	win->ServerConnected = 0;
+        win->ServerConnected = 0;
         connectingText->close();
         loadingBar->close();
-	loadingDot->close();
-	delete dotPos;
-	delete waitTime;
-	delete holdTimer;
+        loadingDot->close();
+        delete dotPos;
+        delete waitTime;
+        delete holdTimer;
         nextState(2);
       } else {
 	if (win->ConnectionError) {
@@ -158,6 +159,8 @@ void connectedScreen() {
   static int *holdTimer;
   if (state==2) {
     if (lastState==1) {
+        
+      cout<<"connectScreen is running"<<endl;
       connectedText = new QLabel();
       connectedText->setObjectName("Connected Text");
       connectedText->setParent(win);
@@ -174,50 +177,55 @@ void connectedScreen() {
       connectedText->close();
       delete holdTimer;
       nextState(3);
+      cout<<"connectedScreen is finishing"<<endl;
     }
   }
 }
 
 void waitScreen() {
   static QLabel *waitPrompt;
-  static int *holdTimer;
-  static int *dotPos;
+  static int holdTimer;
+  static int dotPos;
   static QWidget *loadingBar;
   static QWidget *loadingDot;
   if (state == 3) {
     if (lastState != 3) {
+      cout<<"waitScreen is running"<<endl;
       waitPrompt = new QLabel();
       waitPrompt->setObjectName("Wait Prompt Text");
       waitPrompt->setParent(win);
       waitPrompt->setGeometry(int(400 * rate_w), int(300*rate_h), int(200*rate_w), int(200*rate_h));
       waitPrompt->setText("Waiting for Server Prompt");
       waitPrompt->setAlignment(Qt::AlignCenter);
-      holdTimer = new int(1);
+      holdTimer = 1;
       loadingBar = new QWidget();
       loadingBar->setObjectName("Loading Bar");
       loadingBar->setParent(win);
+      loadingDot = new QWidget();
       loadingDot->setObjectName("Loading Dot");
       loadingDot->setParent(loadingBar);
       loadingDot->setGeometry(0, 0, 20, 20);
       loadingDot->setPalette(QPalette(Qt::black));
       loadingDot->setAutoFillBackground(true);
-      dotPos = new int(1);
+      dotPos = 1;
       loadingBar->show();
       loadingDot->show();
       waitPrompt->show();
       nextState(3);
-    } else if (*holdTimer < 5) {
-      *holdTimer = *holdTimer + 1;
-      *dotPos = (*dotPos + 1)%11;
-      loadingDot->move(0 + *dotPos*10, 0);
+    } else if (holdTimer < 5) {
+      holdTimer = holdTimer + 1;
+      dotPos = (dotPos + 1)%11;
+      loadingDot->move(0 + dotPos*10, 0);
       nextState(3);
-    } else if (*holdTimer == 5) {
+    } else if (holdTimer == 5) {
+      cout<<"Read buffer is running"<<endl;
       bzero(buffer, 512);
       sock->read(buffer, 511);
-      *holdTimer = 6;
-      *dotPos = (*dotPos + 1)%11;
-      loadingDot->move(0 + *dotPos*10, 0);
+      holdTimer = 6;
+      dotPos = (dotPos + 1)%11;
+      loadingDot->move(0 + dotPos*10, 0);
       nextState(3);
+      cout<<"Read buffer is complete"<<endl;
     } else if (win->ReadyToRead) {
       cout << "Ready to read\n";
       win->ReadyToRead = 0;
@@ -225,11 +233,10 @@ void waitScreen() {
       waitPrompt->close();
       loadingBar->close();
       loadingDot->close();
-      delete holdTimer;
       nextState(4);
     } else {
-      *dotPos = (*dotPos + 1)%11;
-      loadingDot->move(0 + *dotPos*10, 0);
+      dotPos = (dotPos + 1)%11;
+      loadingDot->move(0 + dotPos*10, 0);
       nextState(3);
     }
   }
