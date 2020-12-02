@@ -7,6 +7,8 @@ import java.util.*;
 
 public class CommandLineClient {
     public static void main(String[] args) {
+        System.out.println();
+
         String hostName = "localhost";
         Integer portNumber = 6969;
 
