@@ -113,7 +113,7 @@ void connectingScreen() {
       sock = new QTcpSocket(win);
       QObject::connect(sock, SIGNAL(connected()), win, SLOT(serverConnected()));
       QObject::connect(sock, SIGNAL(readyRead()), win, SLOT(readyToRead()));
-      sock->connectToHost(QString("localhost"), quint16(9000));
+      sock->connectToHost(QString("localhost"), quint16(6969));
       *holdTimer = 6;
       *dotPos = (*dotPos + 1)%11;
       loadingDot->move(0 + *dotPos*10, 0);
@@ -133,7 +133,7 @@ void connectingScreen() {
 	  if (win->retryConnect) {
             cout << "Time to retry\n";
 	    win->retryConnect = 0;
-            sock->connectToHost(QString("localhost"), quint16(9000));
+            sock->connectToHost(QString("localhost"), quint16(6969));
 	    win->ConnectionError = 0;
 	  }
 	} else {
@@ -184,8 +184,8 @@ void connectedScreen() {
 
 void waitScreen() {
   static QLabel *waitPrompt;
-  static int holdTimer;
-  static int dotPos;
+  static int *holdTimer;
+  static int *dotPos;
   static QWidget *loadingBar;
   static QWidget *loadingDot;
   if (state == 3) {
@@ -197,33 +197,33 @@ void waitScreen() {
       waitPrompt->setGeometry(int(400 * rate_w), int(300*rate_h), int(200*rate_w), int(200*rate_h));
       waitPrompt->setText("Waiting for Server Prompt");
       waitPrompt->setAlignment(Qt::AlignCenter);
-      holdTimer = 1;
+      holdTimer = new int(1);
       loadingBar = new QWidget();
       loadingBar->setObjectName("Loading Bar");
-      loadingBar->setParent(win);
+      loadingBar->setParent(waitPrompt);
       loadingDot = new QWidget();
       loadingDot->setObjectName("Loading Dot");
       loadingDot->setParent(loadingBar);
       loadingDot->setGeometry(0, 0, 20, 20);
       loadingDot->setPalette(QPalette(Qt::black));
       loadingDot->setAutoFillBackground(true);
-      dotPos = 1;
+      dotPos = new int(1);
       loadingBar->show();
       loadingDot->show();
       waitPrompt->show();
       nextState(3);
-    } else if (holdTimer < 5) {
-      holdTimer = holdTimer + 1;
-      dotPos = (dotPos + 1)%11;
-      loadingDot->move(0 + dotPos*10, 0);
+    } else if (*holdTimer < 5) {
+      *holdTimer = *holdTimer + 1;
+      *dotPos = (*dotPos + 1)%11;
+      loadingDot->move(0 + *dotPos*10, 0);
       nextState(3);
-    } else if (holdTimer == 5) {
+    } else if (*holdTimer == 5) {
       cout<<"Read buffer is running"<<endl;
       bzero(buffer, 512);
       sock->read(buffer, 511);
-      holdTimer = 6;
-      dotPos = (dotPos + 1)%11;
-      loadingDot->move(0 + dotPos*10, 0);
+      *holdTimer = 6;
+      *dotPos = (*dotPos + 1)%11;
+      loadingDot->move(0 + *dotPos*10, 0);
       nextState(3);
       cout<<"Read buffer is complete"<<endl;
     } else if (win->ReadyToRead) {
@@ -235,8 +235,8 @@ void waitScreen() {
       loadingDot->close();
       nextState(4);
     } else {
-      dotPos = (dotPos + 1)%11;
-      loadingDot->move(0 + dotPos*10, 0);
+      *dotPos = (*dotPos + 1)%11;
+      loadingDot->move(0 + *dotPos*10, 0);
       nextState(3);
     }
   }
@@ -252,7 +252,7 @@ map<int,bool> removeUser;
 
 string score2Road(int sc){
     string s(maxScore,'.');
-    s[sc] = '.';
+    s[sc] = 'O';
     return s;
 }
 
@@ -260,36 +260,67 @@ void drawBackGround(bool close){
     static QListWidget *list_userUI;
     static QListWidget *scoreUI;
     static QLabel *serverMessageUI;
+    static QLabel *yourScoreUI;
+    static QLabel *maxScoreUI;
     if(close){
       scoreUI -> close();
       serverMessageUI -> close();
       list_userUI->close();
+      yourScoreUI->close();
+      maxScoreUI->close();
       return;
     }
     
     cout<<"drawBackGround is running..."<<endl;
     
+    yourScoreUI = new QLabel();
+    yourScoreUI -> setObjectName("Your score");
+    yourScoreUI -> setParent(win);
+    yourScoreUI -> setGeometry(0.1*w_win,0.65*h_win,0.2*w_win,0.05*h_win);
+    string ys = "Your score: " + to_string(yourScore); 
+    yourScoreUI -> setText(ys.c_str());
+    
+    maxScoreUI = new QLabel();
+    maxScoreUI -> setObjectName("Max score");
+    maxScoreUI -> setParent(win);
+    maxScoreUI -> setGeometry(0.1*w_win,0.75*h_win,0.2*w_win,0.05*h_win);
+    string ms = "Max score: " + to_string(maxScore);
+    maxScoreUI -> setText(ms.c_str());
+    
     serverMessageUI = new QLabel();
     serverMessageUI -> setObjectName("Server Message");
     serverMessageUI -> setParent(win);
-    serverMessageUI -> setGeometry(0.1*w_win, 0.5*h_win, 0.6*w_win, 0.01*w_win);
+    serverMessageUI -> setGeometry(0.1*w_win, 0.55*h_win, 0.8*w_win, 0.05*w_win);
+    serverMessage = "Server: " + serverMessage;
+    cout<<serverMessage<<endl;
     serverMessageUI -> setText(serverMessage.c_str());
     list_userUI = new QListWidget();  
     list_userUI->setObjectName("List User");
     list_userUI->setParent(win);
     list_userUI->setGeometry(0.1*w_win, 0.1*h_win, 0.6*w_win, 0.4*h_win);
-    //for(int i =  0;i<l_item.size();++i){
-    //  list_user->addItem(QString::number(i)+" "+list[i].c_str());
-    //}
+    
+    vector<string>  ro(listUser.size(),".");
+    for(int i=0 ; i<score.size();++i){
+        string tmp = score2Road(score[i].first);
+        ro[score[i].second] = tmp;
+    }
+    list_userUI->addItem("Road board");
+    for(int i =  0;i<listUser.size();++i){
+      list_userUI->addItem(QString::number(i)+" "+listUser[i].c_str()+": "+ro[i].c_str());
+    }
     scoreUI = new QListWidget();
     scoreUI -> setObjectName("List Score");
     scoreUI -> setParent(win);
     scoreUI -> setGeometry(0.7*w_win,0.1*h_win,0.2*w_win, 0.4*h_win);
-    
+    scoreUI -> addItem("LeaderBoard");
+    for(int i=0;i<score.size();++i){
+        scoreUI -> addItem(QString::number(score[i].second)+" "+listUser[score[i].second].c_str()+" "+QString::number(score[i].first));
+    }
     list_userUI -> show();
     serverMessageUI->show();
     scoreUI -> show();
-    
+    yourScoreUI->show();
+    maxScoreUI -> show();
     cout<<"drawBackGround is finishing..."<<endl;
     
 }
@@ -314,12 +345,12 @@ void inputScreen() {
       inputField = new QTextEdit();
       inputField->setObjectName("user Input");
       inputField->setParent(win);
-      inputField->setGeometry(0.3*w_win, 0.7*h_win, 0.4*w_win, 0.2*w_win);
+      inputField->setGeometry(0.3*w_win, 0.7*h_win, 0.4*w_win, 0.15*w_win);
       confirm = new QPushButton();
       confirm->setObjectName("Confirm Button");
       confirm->setParent(win);
       confirm->setText("Confirm");
-      confirm->setGeometry(0.3*w_win, 0.9*h_win, 0.4*w_win, 0.01*h_win);
+      confirm->setGeometry(0.3*w_win, 0.9*h_win, 0.4*w_win, 0.05*h_win);
       QObject::connect(confirm, SIGNAL(clicked()), win, SLOT(gotInput()));
       confirm->show();
       //dummy->show();
@@ -333,6 +364,7 @@ void inputScreen() {
       win->GotInput = 0;
       inputText = inputField->toPlainText();
       string stdInputText = inputText.toStdString();
+      stdInputText.push_back('\n');
       cout << inputText.toStdString() << endl;
       sock->write(stdInputText.c_str());
       //dummy->close();
@@ -420,17 +452,18 @@ pair<int, int> score2Pair(string s){
 
 void HandleMessage(){
     string m(buffer);
+    m.pop_back();
     vector<string> listM;
     listM = split(m);
     string c = listM[0];
     cout<<"Message contains: ";
     cout<<listM.size()<<endl;
     for(int i=0;i<listM.size();++i){
-        cout<<listM[i]<<endl;
+        cout<<listM[i]<<' '<<listM[i].size()<<endl;
     }
     cout<<"handle_message is running..."<<endl;
     if(c == "username_request"){
-        serverMessage = "Enter username: ";
+        serverMessage = "enter username";
     }else if(c == "username_request_status"){
         if(listM[1]=="Success"){
             serverMessage = "Registration completed successfully";
@@ -457,6 +490,8 @@ void HandleMessage(){
         for(int i = 0 ;i<listScore.size();++i){
             score.push_back(score2Pair(listScore[i]));
         }
+        sort(score.begin(),score.end());
+        reverse(score.begin(),score.end());
         
     }
     else if(c == "continue"){
