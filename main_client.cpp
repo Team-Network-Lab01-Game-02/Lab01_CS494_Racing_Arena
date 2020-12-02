@@ -259,8 +259,10 @@ map<int,bool> removeUser;
 */
 
 string score2Road(int sc){
-    string s(maxScore,'.');
-    s[sc] = 'O';
+    string s(maxScore*3,'.');
+    s[sc+1] = 'O';
+    s[sc+0] = 'o';
+    s[sc+2] = 'o';
     return s;
 }
 
@@ -308,7 +310,7 @@ void drawBackGround(bool close){
     list_userUI->setParent(win);
     list_userUI->setGeometry(0.1*w_win, 0.1*h_win, 0.6*w_win, 0.4*h_win);
     
-    string rsize(maxScore,'.');
+    string rsize(maxScore*3,'.');
     vector<string>  ro(listUser.size(),rsize);
     for(int i=0 ; i<(int)score.size();++i){
         string tmp = score2Road(score[i].first);
@@ -316,9 +318,15 @@ void drawBackGround(bool close){
     }
     string headRoad = "UserID/UserName"+string(20,'.')+"Road"+string(20,'.');
     list_userUI->addItem(headRoad.c_str());
+<<<<<<< HEAD
     for(int i =  0;i<(int)listUser.size();++i){
       int sz = 40;
       string item = listUser[i]+": "+string(sz-listUser[i].size(),' ') +ro[i];
+=======
+    for(int i =  0;i<listUser.size();++i){
+      int sz = 15;
+      string item = listUser[i]+": "+string(sz-listUser[i].size(),' ')+'\t' +ro[i];
+>>>>>>> 05b80fc1309fbd536f8ed37d9f92f4592ad00df4
       list_userUI->addItem(item.c_str());
     }
     scoreUI = new QListWidget();
