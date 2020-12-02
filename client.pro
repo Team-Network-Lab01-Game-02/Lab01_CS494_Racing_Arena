@@ -1,4 +1,4 @@
-projectdir = /home/popchim/socket/Lab01_CS494_Racing_Arena
+projectdir = /home/goflag/Dev/Lab01-Networking/Lab01_CS494_Racing_Arena
 
 CONFIG += qt
 QT += widgets

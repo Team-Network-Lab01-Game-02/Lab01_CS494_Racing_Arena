@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = client1.0.0
-DISTDIR = /home/popchim/socket/Lab01_CS494_Racing_Arena/.tmp/client1.0.0
+DISTDIR = /home/goflag/Dev/Lab01-Networking/Lab01_CS494_Racing_Arena/.tmp/client1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
 LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5Core.so /usr/lib/x86_64-linux-gnu/libGL.so -lpthread   
@@ -358,7 +358,7 @@ compiler_moc_header_clean:
 moc_client.cpp: include/client.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/popchim/socket/Lab01_CS494_Racing_Arena/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/popchim/socket/Lab01_CS494_Racing_Arena -I/home/popchim/socket/Lab01_CS494_Racing_Arena/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include include/client.h -o moc_client.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/goflag/Dev/Lab01-Networking/Lab01_CS494_Racing_Arena/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/goflag/Dev/Lab01-Networking/Lab01_CS494_Racing_Arena -I/home/goflag/Dev/Lab01-Networking/Lab01_CS494_Racing_Arena/include -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include include/client.h -o moc_client.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:

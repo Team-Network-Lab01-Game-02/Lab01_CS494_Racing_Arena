@@ -237,7 +237,7 @@ void waitScreen() {
     } else if (win->ReadyToRead) {
       cout << "Ready to read\n";
       win->ReadyToRead = 0;
-      cout << buffer << endl;
+      cout << buffer <<"hello"<< endl;
       waitPrompt->close();
       loadingBar->close();
       loadingDot->close();
@@ -260,9 +260,9 @@ map<int,bool> removeUser;
 
 string score2Road(int sc){
     string s(maxScore*3,'.');
-    s[sc+1] = 'O';
-    s[sc+0] = 'o';
-    s[sc+2] = 'o';
+    s[sc*3+1] = 'O';
+    s[sc*3+0] = 'o';
+    s[sc*3+2] = 'o';
     return s;
 }
 
@@ -333,7 +333,8 @@ void drawBackGround(bool close){
     scoreUI -> setGeometry(0.7*w_win,0.1*h_win,0.2*w_win, 0.4*h_win);
     scoreUI -> addItem("LeaderBoard");
     for(int i=0;i<(int)score.size();++i){
-        scoreUI -> addItem(QString::number(score[i].second)+" "+listUser[score[i].second].c_str()+" "+QString::number(score[i].first));
+        string item = listUser[score[i].second]+'\t'+to_string(score[i].first);
+        scoreUI -> addItem(item.c_str());
     }
     list_userUI -> show();
     serverMessageUI->show();
@@ -351,6 +352,10 @@ void inputScreen() {
   static QPushButton *confirm;
   if (state == 4) {
     if (lastState != 4) {
+      HandleMessage();
+      if(state == 3 ){
+          return;
+      }
       /*
         dummy = new QLabel();
       dummy->setObjectName("Dummy Text");
@@ -374,7 +379,7 @@ void inputScreen() {
       //dummy->show();
       inputField->show();
       
-      HandleMessage();
+     
       drawBackGround(0);
      
       nextState(4);
@@ -494,6 +499,7 @@ pair<int, int> score2Pair(string s){
     for(int i=0;i<(int)s.size();++i){
         if(s[i]==' '){
             is_id = false;
+            continue;
         }
         if(is_id){
             id = id*10 + (s[i]-'0');
@@ -507,8 +513,12 @@ pair<int, int> score2Pair(string s){
 }
 
 void HandleMessage(){
-    
+    cout<<"handle_message is running..."<<endl;
     string m(buffer);
+    if(m.size()==0)  {
+        nextState(3);
+        return;
+    }
     m.pop_back();
     vector<string> listM;
     listM = split(m);
@@ -518,7 +528,7 @@ void HandleMessage(){
     for(int i=0;i<(int)listM.size();++i){
         cout<<listM[i]<<' '<<listM[i].size()<<endl;
     }
-    cout<<"handle_message is running..."<<endl;
+
     if(c == "username_request"){
         serverMessage = "enter username";
     }else if(c == "username_request_status"){
@@ -552,10 +562,12 @@ void HandleMessage(){
 	timeBox->show();
         cout << "Enter checkpoint 3\n";
     }else if(c == "answer_info"){
-        serverMessage = "Your  answer is " + listM[1] +" and " + listM[2] +",  you are " + listM[3];
+        serverMessage = "Your  answer is " + listM[2] +" and " + listM[3] +",  you are " + listM[4];
         vector<string> listRemove = findListFromMessage(listM,0);
-        vector<string> listScore = findListFromMessage(listM,4+listRemove.size());
-        
+        vector<string> listScore = findListFromMessage(listM,7+listRemove.size());
+        yourScore = atoi(listM[1].c_str());
+        cout<<"listScore size: "<<listScore.size()<<endl;
+        cout<<"listRemove size:"<<listRemove.size()<<endl;
         for(int i = 0 ;i<(int)listRemove.size();++i){
          removeUser[atoi(listRemove[i].c_str())] = true;   
         }
@@ -571,6 +583,7 @@ void HandleMessage(){
         if(listM[1]=="y"){
             serverMessage = "Game Over!!, The winner is: ";
             sort(score.begin(),score.end());
+            reverse(score.begin(),score.end());
             serverMessage += listUser[score[0].second];
         }
         else{
