@@ -3,6 +3,7 @@
 extern int laststate;
 extern int state;
 extern QTimer *aTimer;
+extern bool mathQuestion;
 
 void window::startClicked() {
   cout << "Start Button clicked\n";
@@ -33,7 +34,7 @@ void window::gotInput() {
   cout << "Got your input. Echoing: \n";
   GotInput = 1;
   timeInMilli = aTimer->remainingTime();
-  TimeOut = 1;
+  if(mathQuestion) TimeOut = 1;
 }
 
 void window::timeOut() {
@@ -41,5 +42,5 @@ void window::timeOut() {
   TimeOut = 1;
   timeInMilli = aTimer->remainingTime();
   cout << "THE TIMING: " << timeInMilli << endl;
-  timeInMilli = -1;
+  timeInMilli = 100001;
 }

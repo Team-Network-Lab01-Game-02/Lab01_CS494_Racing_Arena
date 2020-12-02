@@ -318,15 +318,13 @@ void drawBackGround(bool close){
     }
     string headRoad = "UserID/UserName"+string(20,'.')+"Road"+string(20,'.');
     list_userUI->addItem(headRoad.c_str());
-<<<<<<< HEAD
     for(int i =  0;i<(int)listUser.size();++i){
       int sz = 40;
       string item = listUser[i]+": "+string(sz-listUser[i].size(),' ') +ro[i];
-=======
-    for(int i =  0;i<listUser.size();++i){
+    }
+    for(int i =  0;i<(int)listUser.size();++i){
       int sz = 15;
       string item = listUser[i]+": "+string(sz-listUser[i].size(),' ')+'\t' +ro[i];
->>>>>>> 05b80fc1309fbd536f8ed37d9f92f4592ad00df4
       list_userUI->addItem(item.c_str());
     }
     scoreUI = new QListWidget();
@@ -342,8 +340,7 @@ void drawBackGround(bool close){
     scoreUI -> show();
     yourScoreUI->show();
     maxScoreUI -> show();
-    cout<<"drawBackGround is finishing..."<<endl;
-    
+    cout<<"drawBackGround is finishing..."<<endl;    
 }
 
 void inputScreen() {
@@ -403,22 +400,23 @@ void inputScreen() {
       cout << "Exit checkpoint 2\n";
       
     } else if (mathQuestion && win->TimeOut) {
+	cout << "win->TimeOut:" << win->TimeOut <<endl;
 	cout << "Enter checkpoint 1\n";
 	mathQuestion = 0;
 	win->TimeOut = 0;
-        if (win->GotInput) {
-	  cout << "Enter checkpoint 1a\n";
-	  win->GotInput = 0;
-          inputText = inputField->toPlainText();
-	  string stdInputText = inputText.toStdString();
-          if(stdInputText.size()==0){
-            stdInputText = "OK";
-          }
-          stdInputText.push_back('\n');
-          cout << inputText.toStdString() << endl;
-          sock->write(stdInputText.c_str());
-	  cout << "Exit checkpoint 1a\n";
+	cout << "Enter checkpoint 1a\n";
+	win->GotInput = 0;
+        inputText = inputField->toPlainText();
+	string stdInputText = inputText.toStdString();
+        if(stdInputText.size()==0){
+          stdInputText = "0";
         }
+	stdInputText.push_back(',');
+	stdInputText += to_string(timeInMilli);
+        stdInputText.push_back('\n');
+        cout << inputText.toStdString() << endl;
+        sock->write(stdInputText.c_str());
+	cout << "Exit checkpoint 1a\n";
 	aTimer->stop();
 	timeBox->close();
         inputField->close();
@@ -542,7 +540,7 @@ void HandleMessage(){
     }else if(c == "question"){
         cout << "Enter checkpoint 3\n";
         serverMessage = listM[1];
-	aTimer->start(100000000);
+	aTimer->start(10000);
         mathQuestion = 1;
 	timeBox =  new QLabel(win);
 

@@ -36,6 +36,7 @@ int clientTest(char *argv[]);
 extern int laststate;
 extern int state;
 extern int timeInMilli;
+extern bool mathQuestion;
 
 class window : public QWidget {
   Q_OBJECT
