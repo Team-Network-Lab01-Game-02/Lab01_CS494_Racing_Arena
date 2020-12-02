@@ -6,7 +6,7 @@ int serverTest(char *portno){
   int connectFd = accept(listenFd, (sockaddr *) NULL, NULL);
   cout << "Client connected. Sending welcome message" << endl;
   char buffer[256];
-  send(connectFd, "username_id_mapping,start,abc,bcde,gdbc,end", 512, 0);
+  send(connectFd, "question,5 + 5", 512, 0);
   //username_request
   //username_request_status,Success
   //username_request_status,Failure

@@ -1,5 +1,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -34,6 +35,7 @@ void hello();
 int clientTest(char *argv[]);
 extern int laststate;
 extern int state;
+extern int timeInMilli;
 
 class window : public QWidget {
   Q_OBJECT
@@ -45,6 +47,7 @@ class window : public QWidget {
   bool retryConnect = 0;
   bool ReadyToRead = 0;
   bool GotInput = 0;
+  bool TimeOut = 0;
 
   signals:
 
@@ -55,6 +58,7 @@ class window : public QWidget {
     void finishDisc();
     void readyToRead();
     void gotInput();
+    void timeOut();
 };
 
 class gameLoop : public QWidget {

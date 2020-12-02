@@ -1,5 +1,6 @@
 #include "client.h"
 
+int timeInMilli;
 int lastState = -1;
 int state = 0;
 QApplication *app;
@@ -7,7 +8,11 @@ window *win;
 QTcpSocket *sock;
 char buffer[512];
 QString inputText;
-
+QTimer *aTimer;
+//int timeInMilli = 5;
+bool mathQuestion = 0;
+int counter = 0;
+QLabel *timeBox;
 
 //main screen Information
 vector<string> listUser;
@@ -305,13 +310,13 @@ void drawBackGround(bool close){
     
     string rsize(maxScore,'.');
     vector<string>  ro(listUser.size(),rsize);
-    for(int i=0 ; i<score.size();++i){
+    for(int i=0 ; i<(int)score.size();++i){
         string tmp = score2Road(score[i].first);
         ro[score[i].second] = tmp;
     }
     string headRoad = "UserID/UserName"+string(20,'.')+"Road"+string(20,'.');
     list_userUI->addItem(headRoad.c_str());
-    for(int i =  0;i<listUser.size();++i){
+    for(int i =  0;i<(int)listUser.size();++i){
       int sz = 40;
       string item = listUser[i]+": "+string(sz-listUser[i].size(),' ') +ro[i];
       list_userUI->addItem(item.c_str());
@@ -321,7 +326,7 @@ void drawBackGround(bool close){
     scoreUI -> setParent(win);
     scoreUI -> setGeometry(0.7*w_win,0.1*h_win,0.2*w_win, 0.4*h_win);
     scoreUI -> addItem("LeaderBoard");
-    for(int i=0;i<score.size();++i){
+    for(int i=0;i<(int)score.size();++i){
         scoreUI -> addItem(QString::number(score[i].second)+" "+listUser[score[i].second].c_str()+" "+QString::number(score[i].first));
     }
     list_userUI -> show();
@@ -368,7 +373,8 @@ void inputScreen() {
       drawBackGround(0);
      
       nextState(4);
-    } else if (win->GotInput) {
+    } else if (!mathQuestion && win->GotInput) {
+      cout << "Enter checkpoint 2\n";
       win->GotInput = 0;
       inputText = inputField->toPlainText();
       string stdInputText = inputText.toStdString();
@@ -386,9 +392,38 @@ void inputScreen() {
       drawBackGround(1);
       
       nextState(3);
+      cout << "Exit checkpoint 2\n";
       
-      cout<<"inputScreen is finishing..."<<endl;
+    } else if (mathQuestion && win->TimeOut) {
+	cout << "Enter checkpoint 1\n";
+	mathQuestion = 0;
+	win->TimeOut = 0;
+        if (win->GotInput) {
+	  cout << "Enter checkpoint 1a\n";
+	  win->GotInput = 0;
+          inputText = inputField->toPlainText();
+	  string stdInputText = inputText.toStdString();
+          if(stdInputText.size()==0){
+            stdInputText = "OK";
+          }
+          stdInputText.push_back('\n');
+          cout << inputText.toStdString() << endl;
+          sock->write(stdInputText.c_str());
+	  cout << "Exit checkpoint 1a\n";
+        }
+	aTimer->stop();
+	timeBox->close();
+        inputField->close();
+	confirm->close();
+	drawBackGround(1);
+	nextState(3);
+	cout << "Exit checkpoint 1\n";
     } else {
+      if (mathQuestion) {	
+	timeInMilli = aTimer->remainingTime();
+	cout << timeInMilli << endl;
+        timeBox->setText(QString(to_string(timeInMilli).c_str()));
+      }
       nextState(4);
     }
   }
@@ -412,6 +447,10 @@ void initGameLoop() {
   gLoop = new gameLoop(win);
   timer = new QTimer(gLoop);
   QObject::connect(timer, SIGNAL(timeout()), gLoop, SLOT(atClkEdge()));
+  aTimer = new QTimer(win);
+  aTimer->setSingleShot(1);
+  aTimer->setTimerType(Qt::PreciseTimer);
+  QObject::connect(aTimer, SIGNAL(timeout()), win, SLOT(timeOut()));
   timer->start(100); 
   win->show();
 }
@@ -428,13 +467,13 @@ vector<string> findListFromMessage(vector<string> ms,int index){
     string end = "end";
     string start = "start";
     int start_index = ms.size();
-    for(int i = index ; i<ms.size();++i){
+    for(int i = index ; i<(int)ms.size();++i){
         if(ms[i]==start){
             start_index = i+1;
             break;
         }
     }
-    for(int i = start_index ; i<ms.size();++i){
+    for(int i = start_index ; i<(int)ms.size();++i){
         if(ms[i]=="end") break;
         res.push_back(ms[i]);
     }
@@ -446,7 +485,7 @@ pair<int, int> score2Pair(string s){
     int id = 0;
     int sc = 0;
     bool  is_id = true;
-    for(int i=0;i<s.size();++i){
+    for(int i=0;i<(int)s.size();++i){
         if(s[i]==' '){
             is_id = false;
         }
@@ -462,6 +501,7 @@ pair<int, int> score2Pair(string s){
 }
 
 void HandleMessage(){
+    
     string m(buffer);
     m.pop_back();
     vector<string> listM;
@@ -469,7 +509,7 @@ void HandleMessage(){
     string c = listM[0];
     cout<<"Message contains: ";
     cout<<listM.size()<<endl;
-    for(int i=0;i<listM.size();++i){
+    for(int i=0;i<(int)listM.size();++i){
         cout<<listM[i]<<' '<<listM[i].size()<<endl;
     }
     cout<<"handle_message is running..."<<endl;
@@ -492,17 +532,29 @@ void HandleMessage(){
     }else if (c=="wait_ready"){
         serverMessage ="Are you ready? ";
     }else if(c == "question"){
+        cout << "Enter checkpoint 3\n";
         serverMessage = listM[1];
+	aTimer->start(100000000);
+        mathQuestion = 1;
+	timeBox =  new QLabel(win);
+
+	timeBox->setGeometry(0.9*w_win, 0*h_win, 0.1*w_win, 0.1*h_win);
+        cout << "Enter checkpoint 4\n";
+	timeBox->setAlignment(Qt::AlignCenter);
+	timeBox->setText("10000");
+        cout << "Exit checkpoint 4\n";
+	timeBox->show();
+        cout << "Enter checkpoint 3\n";
     }else if(c == "answer_info"){
         serverMessage = "Your  answer is " + listM[1] +" and " + listM[2] +",  you are " + listM[3];
         vector<string> listRemove = findListFromMessage(listM,0);
         vector<string> listScore = findListFromMessage(listM,4+listRemove.size());
         
-        for(int i = 0 ;i<listRemove.size();++i){
+        for(int i = 0 ;i<(int)listRemove.size();++i){
          removeUser[atoi(listRemove[i].c_str())] = true;   
         }
         
-        for(int i = 0 ;i<listScore.size();++i){
+        for(int i = 0 ;i<(int)listScore.size();++i){
             score.push_back(score2Pair(listScore[i]));
         }
         sort(score.begin(),score.end());

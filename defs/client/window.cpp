@@ -2,6 +2,7 @@
 
 extern int laststate;
 extern int state;
+extern QTimer *aTimer;
 
 void window::startClicked() {
   cout << "Start Button clicked\n";
@@ -31,4 +32,14 @@ void window::readyToRead() {
 void window::gotInput() {
   cout << "Got your input. Echoing: \n";
   GotInput = 1;
+  timeInMilli = aTimer->remainingTime();
+  TimeOut = 1;
+}
+
+void window::timeOut() {
+  cout << "Time out\n";
+  TimeOut = 1;
+  timeInMilli = aTimer->remainingTime();
+  cout << "THE TIMING: " << timeInMilli << endl;
+  timeInMilli = -1;
 }

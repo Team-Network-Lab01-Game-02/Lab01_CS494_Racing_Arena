@@ -39,7 +39,7 @@ public class Server {
 
     public static void main(String[] args) {
         final Integer portNumber = 6969;
-        final Integer numPlayers = 3;
+        final Integer numPlayers = 2;
         final Integer startScore = 0;
         final Integer endScore = 10;
         final Integer maxConsecWrong = 2;

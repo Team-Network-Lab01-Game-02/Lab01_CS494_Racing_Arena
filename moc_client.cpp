@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_window_t {
-    QByteArrayData data[9];
-    char stringdata0[114];
+    QByteArrayData data[10];
+    char stringdata0[122];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -39,12 +39,13 @@ QT_MOC_LITERAL(4, 37, 15), // "connectionError"
 QT_MOC_LITERAL(5, 53, 28), // "QAbstractSocket::SocketError"
 QT_MOC_LITERAL(6, 82, 10), // "finishDisc"
 QT_MOC_LITERAL(7, 93, 11), // "readyToRead"
-QT_MOC_LITERAL(8, 105, 8) // "gotInput"
+QT_MOC_LITERAL(8, 105, 8), // "gotInput"
+QT_MOC_LITERAL(9, 114, 7) // "timeOut"
 
     },
     "window\0startClicked\0\0serverConnected\0"
     "connectionError\0QAbstractSocket::SocketError\0"
-    "finishDisc\0readyToRead\0gotInput"
+    "finishDisc\0readyToRead\0gotInput\0timeOut"
 };
 #undef QT_MOC_LITERAL
 
@@ -54,7 +55,7 @@ static const uint qt_meta_data_window[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -62,17 +63,19 @@ static const uint qt_meta_data_window[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   44,    2, 0x0a /* Public */,
-       3,    0,   45,    2, 0x0a /* Public */,
-       4,    1,   46,    2, 0x0a /* Public */,
-       6,    0,   49,    2, 0x0a /* Public */,
-       7,    0,   50,    2, 0x0a /* Public */,
-       8,    0,   51,    2, 0x0a /* Public */,
+       1,    0,   49,    2, 0x0a /* Public */,
+       3,    0,   50,    2, 0x0a /* Public */,
+       4,    1,   51,    2, 0x0a /* Public */,
+       6,    0,   54,    2, 0x0a /* Public */,
+       7,    0,   55,    2, 0x0a /* Public */,
+       8,    0,   56,    2, 0x0a /* Public */,
+       9,    0,   57,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 5,    2,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -92,6 +95,7 @@ void window::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 3: _t->finishDisc(); break;
         case 4: _t->readyToRead(); break;
         case 5: _t->gotInput(); break;
+        case 6: _t->timeOut(); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -137,13 +141,13 @@ int window::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 7;
     }
     return _id;
 }
