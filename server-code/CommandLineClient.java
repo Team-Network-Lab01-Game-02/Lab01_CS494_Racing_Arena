@@ -60,6 +60,8 @@ public class CommandLineClient {
 
             while (true) {
                 in.readLine();
+                System.out.println("Ready?");
+                stdIn.readLine();
                 out.println("ok");
 
                 String question = in.readLine();

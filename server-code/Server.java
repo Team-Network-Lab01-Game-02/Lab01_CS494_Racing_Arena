@@ -88,6 +88,9 @@ public class Server {
             for (Integer i = 0; i < numPlayers; ++i) {
                 fromThreadQueues.get(i).take();
             }
+            for (Integer i = 0; i < numPlayers; ++i) {
+                fromThreadQueues.get(i).take();
+            }
 
             String usernameIdMapping = "username_id_mapping,start";
             for (Integer i = 0; i < numPlayers; ++i) {
@@ -97,11 +100,17 @@ public class Server {
             for (Integer i = 0; i < numPlayers; ++i) {
                 toThreadQueues.get(i).put(usernameIdMapping);
             }
+            for (Integer i = 0; i < numPlayers; ++i) {
+                fromThreadQueues.get(i).take();
+            }
 
             String scoreInfo = "score_info," + startScore + "," + endScore;
 
             for (Integer i = 0; i < numPlayers; ++i) {
                 toThreadQueues.get(i).put(scoreInfo);
+            }
+            for (Integer i = 0; i < numPlayers; ++i) {
+                fromThreadQueues.get(i).take();
             }
 
             Random rand = new Random();
@@ -109,6 +118,9 @@ public class Server {
             while (true) {
                 for (Integer i : currentPlayers) {
                     toThreadQueues.get(i).put("wait_ready");
+                }
+                for (Integer i = 0; i < numPlayers; ++i) {
+                    fromThreadQueues.get(i).take();
                 }
 
                 Integer num1 = rand.nextInt(10);
@@ -217,6 +229,9 @@ public class Server {
 
                     toThreadQueues.get(i).put(answerInfo);
                 }
+                for (Integer i = 0; i < numPlayers; ++i) {
+                    fromThreadQueues.get(i).take();
+                }
 
                 boolean cont = true;
 
@@ -246,6 +261,9 @@ public class Server {
                         toThreadQueues.get(i).put("continue,n");
                     }
                     break;
+                }
+                for (Integer i = 0; i < numPlayers; ++i) {
+                    fromThreadQueues.get(i).take();
                 }
 
                 for (Integer i : removedPlayers) {
