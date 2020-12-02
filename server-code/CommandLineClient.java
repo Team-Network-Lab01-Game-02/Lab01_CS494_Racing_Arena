@@ -30,6 +30,7 @@ public class CommandLineClient {
 
                 if (setNameResult.equals("username_request_status,Success")) {
                     System.out.println("Name set successfully\n");
+                    out.println();
                     break;
                 } else {
                     System.out.println("Name already exists, please enter again");
@@ -45,6 +46,7 @@ public class CommandLineClient {
                 System.out.println(usernameIdMappingTokens.get(i));
             }
             System.out.println();
+            out.println();
 
             String scoreInfo = in.readLine();
             List<String> scoreInfoTokens = Arrays.asList(scoreInfo.split(","));
@@ -52,9 +54,11 @@ public class CommandLineClient {
             System.out.println("Start score: " + scoreInfoTokens.get(1));
             System.out.println("End score: " + scoreInfoTokens.get(2));
             System.out.println();
+            out.println();
 
             while (true) {
                 in.readLine();
+                out.println();
 
                 String question = in.readLine();
                 List<String> questionTokens = Arrays.asList(question.split(","));
@@ -114,6 +118,8 @@ public class CommandLineClient {
                     break;
                 }
 
+                out.println();
+
                 /*
                 System.out.println("Continue? (y/n)");
                 String cont = stdIn.readLine();
@@ -125,6 +131,7 @@ public class CommandLineClient {
                  */
 
                 String cont = in.readLine();
+                out.println();
                 if (cont.equals("continue,n")) {
                     System.out.println("Game is over");
 

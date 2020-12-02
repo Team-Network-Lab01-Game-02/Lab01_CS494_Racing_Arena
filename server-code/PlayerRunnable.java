@@ -44,6 +44,7 @@ public class PlayerRunnable implements Runnable {
 
                 if (setNameResult == 1) {
                     out.println("username_request_status,Success");
+                    in.readln();
                     toCenterQueue.put("Name set");
 
                     break;
@@ -54,13 +55,16 @@ public class PlayerRunnable implements Runnable {
 
             String usernameIdMapping = fromCenterQueue.take();
             out.println(usernameIdMapping);
+            in.readln();
 
             String scoreInfo = fromCenterQueue.take();
             out.println(scoreInfo);
+            in.readln();
 
             while (true) {
                 String waitReady = fromCenterQueue.take();
                 out.println(waitReady);
+                in.readln();
 
                 String question = fromCenterQueue.take();
                 out.println(question);
@@ -75,6 +79,7 @@ public class PlayerRunnable implements Runnable {
 
                 String answerInfo = fromCenterQueue.take();
                 out.println(answerInfo);
+                in.readln();
 
                 /*
                 String cont = in.readLine();
@@ -86,6 +91,7 @@ public class PlayerRunnable implements Runnable {
 
                 String cont = fromCenterQueue.take();
                 out.println(cont);
+                in.readln();
 
                 if (cont.equals("continue,n")) {
                     break;
