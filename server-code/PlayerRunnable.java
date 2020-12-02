@@ -51,16 +51,20 @@ public class PlayerRunnable implements Runnable {
                     out.println("username_request_status,Failure");
                 }
             }
+            in.readLine();
 
             String usernameIdMapping = fromCenterQueue.take();
             out.println(usernameIdMapping);
+            in.readLine();
 
             String scoreInfo = fromCenterQueue.take();
             out.println(scoreInfo);
+            in.readLine();
 
             while (true) {
                 String waitReady = fromCenterQueue.take();
                 out.println(waitReady);
+                in.readLine();
 
                 String question = fromCenterQueue.take();
                 out.println(question);
@@ -75,6 +79,7 @@ public class PlayerRunnable implements Runnable {
 
                 String answerInfo = fromCenterQueue.take();
                 out.println(answerInfo);
+                in.readLine();
 
                 /*
                 String cont = in.readLine();
@@ -86,6 +91,7 @@ public class PlayerRunnable implements Runnable {
 
                 String cont = fromCenterQueue.take();
                 out.println(cont);
+                in.readLine();
 
                 if (cont.equals("continue,n")) {
                     break;

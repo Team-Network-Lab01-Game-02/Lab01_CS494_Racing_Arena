@@ -80,7 +80,7 @@ void connectingScreen() {
       connectingText = new QLabel();
       connectingText->setObjectName("Connecting Text");
       connectingText->setParent(win);
-      connectingText->setGeometry(int(400 * rate_w), int(300*rate_h), int(200*rate_w), int(200*rate_h));
+      connectingText->setGeometry(0.25*w_win, 0.4*h_win, 0.5*w_win, 0.07*h_win);
       connectingText->setText("Connecting to server\n");
       connectingText->setAlignment(Qt::AlignCenter);
       loadingBar = new QWidget();
@@ -164,7 +164,7 @@ void connectedScreen() {
       connectedText = new QLabel();
       connectedText->setObjectName("Connected Text");
       connectedText->setParent(win);
-      connectedText->setGeometry(int(400 * rate_w), int(300*rate_h), int(200*rate_w), int(200*rate_h));
+      connectedText->setGeometry(0.25*w_win, 0.4*h_win, 0.5*w_win, 0.05*h_win);
       connectedText->setText("Connected");
       connectedText->setAlignment(Qt::AlignCenter);
       holdTimer = new int(1);
@@ -194,13 +194,16 @@ void waitScreen() {
       waitPrompt = new QLabel();
       waitPrompt->setObjectName("Wait Prompt Text");
       waitPrompt->setParent(win);
-      waitPrompt->setGeometry(int(400 * rate_w), int(300*rate_h), int(200*rate_w), int(200*rate_h));
+      waitPrompt->setGeometry(0.25*w_win, 0.4*h_win, 0.5*w_win, 0.05*h_win);
       waitPrompt->setText("Waiting for Server Prompt");
       waitPrompt->setAlignment(Qt::AlignCenter);
       holdTimer = new int(1);
       loadingBar = new QWidget();
       loadingBar->setObjectName("Loading Bar");
-      loadingBar->setParent(waitPrompt);
+      loadingBar->setParent(win);
+      loadingBar->setGeometry(int(440 * rate_w), int(500*rate_h), int(120*rate_w), int(20*rate_h));
+      loadingBar->setPalette(Qt::white);
+      loadingBar->setAutoFillBackground(true);
       loadingDot = new QWidget();
       loadingDot->setObjectName("Loading Dot");
       loadingDot->setParent(loadingBar);
@@ -294,19 +297,24 @@ void drawBackGround(bool close){
     serverMessage = "Server: " + serverMessage;
     cout<<serverMessage<<endl;
     serverMessageUI -> setText(serverMessage.c_str());
+    serverMessage = "";
     list_userUI = new QListWidget();  
     list_userUI->setObjectName("List User");
     list_userUI->setParent(win);
     list_userUI->setGeometry(0.1*w_win, 0.1*h_win, 0.6*w_win, 0.4*h_win);
     
-    vector<string>  ro(listUser.size(),".");
+    string rsize(maxScore,'.');
+    vector<string>  ro(listUser.size(),rsize);
     for(int i=0 ; i<score.size();++i){
         string tmp = score2Road(score[i].first);
         ro[score[i].second] = tmp;
     }
-    list_userUI->addItem("Road board");
+    string headRoad = "UserID/UserName"+string(20,'.')+"Road"+string(20,'.');
+    list_userUI->addItem(headRoad.c_str());
     for(int i =  0;i<listUser.size();++i){
-      list_userUI->addItem(QString::number(i)+" "+listUser[i].c_str()+": "+ro[i].c_str());
+      int sz = 40;
+      string item = listUser[i]+": "+string(sz-listUser[i].size(),' ') +ro[i];
+      list_userUI->addItem(item.c_str());
     }
     scoreUI = new QListWidget();
     scoreUI -> setObjectName("List Score");
@@ -349,8 +357,8 @@ void inputScreen() {
       confirm = new QPushButton();
       confirm->setObjectName("Confirm Button");
       confirm->setParent(win);
-      confirm->setText("Confirm");
-      confirm->setGeometry(0.3*w_win, 0.9*h_win, 0.4*w_win, 0.05*h_win);
+      confirm->setText("Next");
+      confirm->setGeometry(0.7*w_win, 0.7*h_win, 0.1*w_win, 0.1*h_win);
       QObject::connect(confirm, SIGNAL(clicked()), win, SLOT(gotInput()));
       confirm->show();
       //dummy->show();
@@ -364,6 +372,9 @@ void inputScreen() {
       win->GotInput = 0;
       inputText = inputField->toPlainText();
       string stdInputText = inputText.toStdString();
+      if(stdInputText.size()==0){
+          stdInputText = "OK";
+      }
       stdInputText.push_back('\n');
       cout << inputText.toStdString() << endl;
       sock->write(stdInputText.c_str());
@@ -472,10 +483,14 @@ void HandleMessage(){
             serverMessage = "Registration failure!!";
         }
     }else if(c == "username_id_mapping"){
+        serverMessage = "User info is updated. ";
         listUser = findListFromMessage(listM,0);
     }else if(c == "score_info"){
+        serverMessage = "Score is updated. ";
         yourScore = atoi(listM[1].c_str());
-        maxScore = atoi(listM[1].c_str());
+        maxScore = atoi(listM[2].c_str());
+    }else if (c=="wait_ready"){
+        serverMessage ="Are you ready? ";
     }else if(c == "question"){
         serverMessage = listM[1];
     }else if(c == "answer_info"){

@@ -279,6 +279,7 @@ public class NonBlockingServer {
 
             // writeToAll("username_request");
             usernameHandling();
+            readFromAll();
 
             String usernameIdMapping = "username_id_mapping,start";
             for (Integer i = 0; i < numPlayers; ++i) {
@@ -286,14 +287,17 @@ public class NonBlockingServer {
             }
             usernameIdMapping += ",end";
             writeToAll(usernameIdMapping);
+            readFromAll();
 
             String scoreInfo = "score_info," + startScore + "," + endScore;
             writeToAll(scoreInfo);
+            readFromAll();
 
             Random rand = new Random();
 
             while (true) {
                 writeToAll("wait_ready");
+                readFromAll();
 
                 Integer num1 = rand.nextInt(10);
                 Integer num2 = rand.nextInt(10);
@@ -409,6 +413,7 @@ public class NonBlockingServer {
                 }
 
                 writeToAll(answerInfos);
+                readFromAll();
 
                 boolean cont = true;
 
@@ -421,8 +426,10 @@ public class NonBlockingServer {
 
                 if (cont) {
                     writeToAll("continue,y");
+                    readFromAll();
                 } else {
                     writeToAll("continue,n");
+                    readFromAll();
                     break;
                 }
 
