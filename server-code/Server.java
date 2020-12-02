@@ -107,6 +107,10 @@ public class Server {
             Random rand = new Random();
 
             while (true) {
+                for (Integer i : currentPlayers) {
+                    toThreadQueues.get(i).put("wait_ready");
+                }
+
                 Integer num1 = rand.nextInt(10);
                 Integer num2 = rand.nextInt(10);
 

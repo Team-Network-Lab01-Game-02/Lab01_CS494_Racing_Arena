@@ -54,6 +54,8 @@ public class CommandLineClient {
             System.out.println();
 
             while (true) {
+                in.readLine();
+
                 String question = in.readLine();
                 List<String> questionTokens = Arrays.asList(question.split(","));
                 System.out.println("Question: " + questionTokens.get(1));

@@ -59,6 +59,9 @@ public class PlayerRunnable implements Runnable {
             out.println(scoreInfo);
 
             while (true) {
+                String waitReady = fromCenterQueue.take();
+                out.println(waitReady);
+
                 String question = fromCenterQueue.take();
                 out.println(question);
 
