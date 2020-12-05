@@ -9,7 +9,7 @@ public class NonBlockingServer {
     private static final Integer portNumber = 6969;
     private static final Integer numPlayers = 3;
     private static final Integer startScore = 0;
-    private static final Integer endScore = 10;
+    private static final Integer endScore = 2;
     private static final Integer maxConsecWrong = 2;
 
     private static ServerSocketChannel serverSocketChannel;
@@ -22,6 +22,40 @@ public class NonBlockingServer {
     private static final List<LineWriter> writers = new ArrayList<>();
 
     private static final List<String> names = new ArrayList<>();
+
+    private static final Random rand = new Random();
+
+    private static List<String> generateQA() {
+        Integer num1 = rand.nextInt(100) + 1;
+        Integer num2 = rand.nextInt(100) + 1;
+
+        List<String> ops = Arrays.asList("+", "-", "*", "/", "%");
+        Integer curOpsIn = rand.nextInt(5);
+
+        String question = num1 + ops.get(curOpsIn) + num2;
+
+        Integer correctAnswer = 0;
+
+        switch (curOpsIn) {
+            case 0:
+                correctAnswer = num1 + num2;
+                break;
+            case 1:
+                correctAnswer = num1 - num2;
+                break;
+            case 2:
+                correctAnswer = num1 * num2;
+                break;
+            case 3:
+                correctAnswer = num1 / num2;
+                break;
+            case 4:
+                correctAnswer = num1 % num2;
+                break;
+        }
+
+        return Arrays.asList(question, correctAnswer.toString());
+    }
 
     private static Boolean isCurrentPlayer(Integer player) {
         for (Integer currentPlayer : currentPlayers) {
@@ -299,12 +333,10 @@ public class NonBlockingServer {
                 writeToAll("wait_ready");
                 readFromAll();
 
-                Integer num1 = rand.nextInt(10);
-                Integer num2 = rand.nextInt(10);
+                List<String> QA = generateQA();
 
-                Integer correctAnswer = num1 + num2;
-
-                String question = "question," + num1 + " + " + num2;
+                String question = "question," + QA.get(0);
+                Integer correctAnswer = Integer.parseInt(QA.get(1));
 
                 writeToAll(question);
 
@@ -324,7 +356,7 @@ public class NonBlockingServer {
                     Integer answer = Integer.parseInt(questionResponseTokens.get(0));
                     Long duration = Long.parseLong(questionResponseTokens.get(1));
 
-                    if (answer.equals(correctAnswer)) {
+                    if (answer.equals(correctAnswer) && duration != -1) {
                         correct.add(true);
 
                         Integer currentScore = scores.get(i);
@@ -351,7 +383,7 @@ public class NonBlockingServer {
                         }
                     }
 
-                    if (duration < fastestDuration) {
+                    if (duration != -1 && duration < fastestDuration) {
                         fastestIndex = i;
                         fastestDuration = duration;
                     }
