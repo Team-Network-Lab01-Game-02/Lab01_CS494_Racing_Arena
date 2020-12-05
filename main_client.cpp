@@ -225,7 +225,7 @@ void waitScreen() {
       *dotPos = (*dotPos + 1)%11;
       loadingDot->move(0 + *dotPos*10, 0);
       nextState(3);
-    } else if (*holdTimer == 5) {
+    } else if (*holdTimer%5==0) {
       cout<<"Read buffer is running"<<endl;
       bzero(buffer, 512);
       sock->read(buffer, 511);
@@ -236,8 +236,7 @@ void waitScreen() {
       cout<<"Read buffer is complete"<<endl;
     } else if (win->ReadyToRead) {
       cout << "Ready to read\n";
-      win->ReadyToRead = 0;
-      cout << buffer <<"hello"<< endl;
+      win->ReadyToRead = 1;
       waitPrompt->close();
       loadingBar->close();
       loadingDot->close();
@@ -287,7 +286,7 @@ void drawBackGround(bool close){
     yourScoreUI -> setObjectName("Your score");
     yourScoreUI -> setParent(win);
     yourScoreUI -> setGeometry(0.1*w_win,0.65*h_win,0.2*w_win,0.05*h_win);
-    string ys = "Your score: " + to_string(yourScore); 
+    string ys = "The answer: " + to_string(yourScore); 
     yourScoreUI -> setText(ys.c_str());
     
     maxScoreUI = new QLabel();
@@ -571,7 +570,7 @@ void HandleMessage(){
         for(int i = 0 ;i<(int)listRemove.size();++i){
          removeUser[atoi(listRemove[i].c_str())] = true;   
         }
-        
+        score.clear();
         for(int i = 0 ;i<(int)listScore.size();++i){
             score.push_back(score2Pair(listScore[i]));
         }
@@ -580,8 +579,8 @@ void HandleMessage(){
         
     }
     else if(c == "continue"){
-        if(listM[1]=="y"){
-            serverMessage = "Game Over!!, The winner is: ";
+        if(listM[1]=="n"){
+            serverMessage = "Game Over!! The winner is: ";
             sort(score.begin(),score.end());
             reverse(score.begin(),score.end());
             serverMessage += listUser[score[0].second];
